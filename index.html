@@ -966,7 +966,7 @@ function saveTask() {
   closeModal(); render(); updateCharts(); populateFilters();
 }
 
-// ── GOOGLE SHEETS API ─────────────────────────────────────────────────────────
+// ── GOOGLE SHEETS API (JSONP para evitar bloqueo CORS) ────────────────────────
 const API_URL = 'https://script.google.com/macros/s/AKfycbwBu6RI6POYyFJgrlXjnw271B_6KtdCi0C09guqP4tR4Lg56PBqAX1UjoEaW9_i5LJC/exec';
 
 function updateStorageLabel(msg, color) {
@@ -976,114 +976,94 @@ function updateStorageLabel(msg, color) {
   lbl.textContent = msg || '';
 }
 
+// JSONP: carga datos inyectando un <script> para evitar bloqueo CORS de Google
+function jsonpGet() {
+  return new Promise((resolve, reject) => {
+    const cbName = '_gcb_' + Date.now();
+    const script = document.createElement('script');
+    const timeout = setTimeout(() => {
+      delete window[cbName]; script.remove();
+      reject(new Error('timeout'));
+    }, 12000);
+    window[cbName] = function(json) {
+      clearTimeout(timeout); delete window[cbName]; script.remove();
+      resolve(json);
+    };
+    script.src = API_URL + '?callback=' + cbName;
+    script.onerror = () => { clearTimeout(timeout); delete window[cbName]; script.remove(); reject(new Error('error')); };
+    document.head.appendChild(script);
+  });
+}
+
+function sheetRecord(t) {
+  return { ID:String(t.id), TIENDA:t.tienda, DESCRIPCION:t.desc, DEPENDENCIA:t.dep,
+    PRIORIDAD:t.prio, ESTADO:t.estado, AVANCE:t.avance, EQUIPO:t.equipo,
+    PLAN:t.plan, RESPONSABLE:t.resp, SMT:t.smt };
+}
+
+function mapRow(row) {
+  return { id:String(row.ID||Date.now()), tienda:row.TIENDA||'', desc:row.DESCRIPCION||'',
+    dep:row.DEPENDENCIA||'', prio:row.PRIORIDAD||'MEDIA', estado:row.ESTADO||'PENDIENTE',
+    avance:parseFloat(row.AVANCE)||0, equipo:row.EQUIPO||'', plan:row.PLAN||'',
+    resp:row.RESPONSABLE||'', smt:row.SMT||'' };
+}
+
+async function apiPost(payload) {
+  try {
+    await fetch(API_URL, { method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+    const now = new Date().toLocaleString('es-CO',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'short'});
+    updateStorageLabel(`☁ Google Sheets · ${data.length} tareas · guardado ${now}`, 'var(--real)');
+  } catch(e) { updateStorageLabel('⚠ No se pudo sincronizar con Sheets','var(--amber)'); }
+}
+
 async function loadFromSheets() {
   updateStorageLabel('Conectando con Google Sheets...', 'var(--amber)');
   try {
-    const r = await fetch(API_URL);
-    const json = await r.json();
+    const json = await jsonpGet();
     if (json.status === 'ok' && Array.isArray(json.data) && json.data.length > 0) {
-      data = json.data.map(row => ({
-        id:     String(row.ID || row.id || Date.now()),
-        tienda: row.TIENDA || row.tienda || '',
-        desc:   row.DESCRIPCION || row.desc || '',
-        dep:    row.DEPENDENCIA || row.dep || '',
-        prio:   row.PRIORIDAD || row.prio || 'MEDIA',
-        estado: row.ESTADO || row.estado || 'PENDIENTE',
-        avance: parseFloat(row.AVANCE || row.avance) || 0,
-        equipo: row.EQUIPO || row.equipo || '',
-        plan:   row.PLAN || row.plan || '',
-        resp:   row.RESPONSABLE || row.resp || '',
-        smt:    row.SMT || row.smt || '',
-      }));
-      const now = new Date().toLocaleString('es-CO', {hour:'2-digit', minute:'2-digit', day:'2-digit', month:'short'});
+      data = json.data.map(mapRow);
+      const now = new Date().toLocaleString('es-CO',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'short'});
       updateStorageLabel(`☁ Google Sheets · ${data.length} tareas · sincronizado ${now}`, 'var(--real)');
     } else {
-      // Sheet vacío — cargar datos por defecto y subirlos
       await uploadDefaultData();
     }
   } catch(e) {
-    console.warn('Error cargando Sheets:', e);
-    updateStorageLabel('⚠ Sin conexión — usando datos locales', 'var(--amber)');
-    // Fallback a datos hardcoded
+    console.warn('Sheets no disponible, usando datos locales:', e);
+    updateStorageLabel('⚠ Sin conexión con Sheets — datos locales', 'var(--amber)');
     data = DATA_RAW.map((r,i)=>({id:String(i),tienda:r[0],desc:r[1],dep:r[2],prio:r[3],estado:r[4],avance:r[5],equipo:r[6],plan:r[7],resp:r[8],smt:r[9]}));
   }
-  populateFilters();
-  updateCharts();
-  render();
+  populateFilters(); updateCharts(); render();
 }
 
 async function uploadDefaultData() {
   updateStorageLabel('Primera vez: subiendo datos al Sheet...', 'var(--amber)');
   data = DATA_RAW.map((r,i)=>({id:String(i),tienda:r[0],desc:r[1],dep:r[2],prio:r[3],estado:r[4],avance:r[5],equipo:r[6],plan:r[7],resp:r[8],smt:r[9]}));
   for (const t of data) {
-    try {
-      await fetch(API_URL, {
-        method: 'POST', mode: 'no-cors',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ action: 'insert', record: sheetRecord(t) })
-      });
-    } catch(e) {}
+    try { await fetch(API_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'insert',record:sheetRecord(t)})}); } catch(e) {}
   }
-  updateStorageLabel(`☁ Datos iniciales subidos al Sheet · ${data.length} tareas`, 'var(--real)');
-}
-
-function sheetRecord(t) {
-  return {
-    ID: String(t.id),
-    TIENDA: t.tienda,
-    DESCRIPCION: t.desc,
-    DEPENDENCIA: t.dep,
-    PRIORIDAD: t.prio,
-    ESTADO: t.estado,
-    AVANCE: t.avance,
-    EQUIPO: t.equipo,
-    PLAN: t.plan,
-    RESPONSABLE: t.resp,
-    SMT: t.smt,
-  };
-}
-
-async function apiPost(payload) {
-  try {
-    await fetch(API_URL, {
-      method: 'POST', mode: 'no-cors',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify(payload)
-    });
-    const now = new Date().toLocaleString('es-CO', {hour:'2-digit', minute:'2-digit', day:'2-digit', month:'short'});
-    updateStorageLabel(`☁ Google Sheets · ${data.length} tareas · guardado ${now}`, 'var(--real)');
-  } catch(e) {
-    updateStorageLabel('⚠ No se pudo sincronizar con Sheets', 'var(--amber)');
-    console.warn('API error:', e);
-  }
+  const now = new Date().toLocaleString('es-CO',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'short'});
+  updateStorageLabel(`☁ Datos subidos al Sheet · ${data.length} tareas · ${now}`, 'var(--real)');
 }
 
 function resetData() {
-  if (!confirm('¿Restaurar todos los datos al estado original?\n\nEsto recargará los datos desde el archivo original (no borra el Sheet).')) return;
-  data = DATA_RAW.map((r,i)=>({id:String(i),tienda:r[0],desc:r[1],dep:r[2],prio:r[3],estado:r[4],avance:r[5],equipo:r[6],plan:r[7],resp:r[8],smt:r[9]}));
-  render(); updateCharts(); populateFilters();
-  notify('Datos restaurados al estado original');
+  if (!confirm('¿Recargar datos desde Google Sheets?')) return;
+  loadFromSheets();
 }
 
-// Patch actions to sync with Sheets
+// Patch actions → sincronizan con Sheets
 const _completeTask = completeTask;
 completeTask = function(id) {
-  const t = data.find(d=>d.id===id);
-  if(t){
-    t.estado='REALIZADO'; t.avance=1;
-    apiPost({ action:'update', record: sheetRecord(t) });
-    render(); updateCharts();
-    notify('Tarea marcada como REALIZADO ✓');
-  }
+  const t = data.find(d=>String(d.id)===String(id));
+  if(t){ t.estado='REALIZADO'; t.avance=1; apiPost({action:'update',record:sheetRecord(t)}); render(); updateCharts(); notify('Tarea marcada como REALIZADO ✓'); }
 };
 
 const _deleteTask = deleteTask;
 deleteTask = function(id) {
   if(confirm('¿Eliminar esta tarea?')){
-    data=data.filter(d=>d.id!==id);
-    apiPost({ action:'delete', id: String(id) });
-    render(); updateCharts(); populateFilters();
-    notify('Tarea eliminada');
+    data=data.filter(d=>String(d.id)!==String(id));
+    apiPost({action:'delete',id:String(id)});
+    render(); updateCharts(); populateFilters(); notify('Tarea eliminada');
   }
 };
 
@@ -1093,26 +1073,19 @@ saveTask = function() {
   let estado = document.getElementById('f-estado').value;
   if(avance >= 1 && norm(estado) !== 'REALIZADO') estado = 'REALIZADO';
   const task = {
-    tienda: document.getElementById('f-tienda').value,
-    desc:   document.getElementById('f-desc').value,
-    dep:    document.getElementById('f-dep').value,
-    prio:   document.getElementById('f-prio').value,
-    estado, avance,
-    equipo: document.getElementById('f-equipo').value,
-    plan:   document.getElementById('f-plan').value,
-    resp:   document.getElementById('f-resp').value,
-    smt:    document.getElementById('f-smt').value,
+    tienda:document.getElementById('f-tienda').value, desc:document.getElementById('f-desc').value,
+    dep:document.getElementById('f-dep').value, prio:document.getElementById('f-prio').value,
+    estado, avance, equipo:document.getElementById('f-equipo').value,
+    plan:document.getElementById('f-plan').value, resp:document.getElementById('f-resp').value,
+    smt:document.getElementById('f-smt').value,
   };
   if(editId !== null) {
-    const idx = data.findIndex(d=>d.id===editId);
+    const idx = data.findIndex(d=>String(d.id)===String(editId));
     if(idx > -1){ task.id = editId; data[idx] = task; }
-    apiPost({ action:'update', record: sheetRecord(task) });
-    notify('Tarea actualizada ✓');
+    apiPost({action:'update',record:sheetRecord(task)}); notify('Tarea actualizada ✓');
   } else {
-    task.id = String(Date.now());
-    data.push(task);
-    apiPost({ action:'insert', record: sheetRecord(task) });
-    notify('Nueva tarea agregada ✓');
+    task.id = String(Date.now()); data.push(task);
+    apiPost({action:'insert',record:sheetRecord(task)}); notify('Nueva tarea agregada ✓');
   }
   closeModal(); render(); updateCharts(); populateFilters();
 };
