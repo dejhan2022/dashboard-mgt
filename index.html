@@ -597,6 +597,8 @@ td {
           <th>Equipo</th>
           <th>Responsable</th>
           <th>SMT/SMR</th>
+          <th>F. Incidencia</th>
+          <th>F. Cierre</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -638,6 +640,8 @@ td {
       <div class="form-row"><label>Equipo / Activo</label><input type="text" id="f-equipo"></div>
       <div class="form-row"><label>Responsable</label><input type="text" id="f-resp"></div>
       <div class="form-row"><label>SMT / SMR</label><input type="text" id="f-smt"></div>
+      <div class="form-row"><label>Fecha de incidencia</label><input type="date" id="f-fecha-inc"></div>
+      <div class="form-row"><label>Fecha de cierre</label><input type="date" id="f-fecha-cierre"></div>
       <div class="form-row form-full"><label>Plan de acción</label><input type="text" id="f-plan"></div>
     </div>
     <div class="modal-footer">
@@ -655,110 +659,121 @@ td {
 
 <script>
 const DATA_RAW = [
-["CIENAGA","DEFINIR USO CAVA DE LACTEOS ( FUERA DE SERVICIO) NO TIENE PUERTA","REFRIGERACION","MEDIA","PENDIENTE",0,"CAVA LACTEOS","FALTA PUERTA PARA HABILITAR","LEONARDO ACOSTA",""],
-["MERCADO","CONTROL DEL RACK DE FRIO MECANICO","REFRIGERACION","MEDIA","REALIZADO",0.3,"RAKC FRIO","MONAR SMR- CREACION DE ITEMS","Juan Riatiga",""],
-["TRANSPORTE","AUTOMATIZACION RACK DE FRIO","REFRIGERACION","ALTA","REALIZADO",0.8,"RACK FRIO","PENDIENTE TRABAJO CON PERSONAL INTERNO","Juan Riatiga",""],
-["TRANSPORTE","FALTAN DOS COMPRESORES RACK FRIO BT 15 HP Y MT DE 22","REFRIGERACION","ALTA","PROCESO",0.7,"RACK FRIO","COTIZADO","Juan Riatiga",""],
-["SANTA CRUZ","TRAXOIL DAÑADO COMPRESOR #1 RACK","REFRIGERACION","ALTA","REALIZADO",1,"RACK FRIO","EN ESPERA DE OC","Juan Riatiga","SMR-47"],
-["RODADERO","REPARACION DE PISOS CUARTOS FRIOS/VENTA","INFRAESTRUCTURA","ALTA","PENDIENTE",0,"CAVA CARNES","COTIZACION A PROYECTOS Y ACABADOS","JUAN RIATIGA",""],
-["TRANSPORTE","MANTENIMIENTO ESTUFAS COCINA","LOCATIVO","ALTA","PROCESO",0,"ESTUFAS","WILIAN PERALES DEBE EJECUTAR ESTA SEMANA","Juan Riatiga","SMT-98"],
-["RODADERO","TRANSFERENCIA ELECTRICA DAÑADA","ELECTRICO","MEDIA","PENDIENTE",0,"PLANTA EMERGENCIA","REPARAR EL SISTEMA","JOSE GAMARRA",""],
-["RODADERO","HABILITAR CAVA DE CARNES CON DIVISION","REFRIGERACION","MEDIA","PENDIENTE",0,"CAVA CARNES","INSTALAR DIFUSORES Y DIVIDIR CAVA","Juan Riatiga",""],
-["RODADERO","AIRES ACONDICIONADOS FUERA DE SERVICIO","REFRIGERACION","MEDIA","PROCESO",0.8,"AIRES","DOS CONDENSADORAS FUERA DE SERVICIO","Juan Riatiga",""],
-["TRANSPORTE","AIRES ACONDCIONADOS","REFRIGERACION","MEDIA","PROCESO",0.8,"AIRES","COMPRAR 1 UNIDAD CONDENSADORA DE 10 HP","Juan Riatiga",""],
-["RODADERO","RACK DE FRIO COMPRESORES","REFRIGERACION","ALTA","PROCESO",1,"RACK FRIO","OCT-","Juan Riatiga","SMR-84"],
-["RODADERO","PRESURIZACIÓN DE SISTEMA RCI","HIDRAULICO","MEDIA","PENDIENTE",0,"RCI","PERSONAL INTERNO DEBE REALIZAR ESTE TRABAJO","JOSE GAMARRA",""],
-["RODADERO","CUARTO FRIO DE CONGELACION MAL ESTADO","LOCATIVO","ALTA","PENDIENTE",0,"CAVA CONGELACION","CONSTRUCCION DE CUARTO NUEVO","Juan Riatiga",""],
-["TRANSPORTE","ADECUACION CAVA DE CARNES","REFRIGERACION","MEDIA","PENDIENTE",0,"CAVA CARNES","COTIZAR PANELES","JUAN RIATIGA",""],
-["TRANSPORTE","ARREGLOS DE BAÑOS CLIENTES","LOCATIVO","MEDIA","PENDIENTE",0.8,"HIDROSANITARIO","PONER AGUA EN LOS BAÑOS","Juan Riatiga",""],
-["SANTA CRUZ","BALDOSAS AREA SAC","LOCATIVO","MEDIA","PROCESO",1,"SAC","COMPRAR Y REALIZAR","Juan Riatiga",""],
-["CIENAGA","ARREGLO DE BAÑOS CLIENTES","OBRA CIVIL","ALTA","PENDIENTE",0,"BAÑOS","COTIZAR CON TERCEROS","Juan Riatiga",""],
-["CIENAGA","ARREGLO TAPA TRAMPA DE GRASA EXTERNA","OBRA CIVIL","MEDIA","PENDIENTE",1,"TRAMPA GRASA","COTIZAR CON TERCEROS","Juan Riatiga",""],
-["MAGDALENA","GOTERAS EN TECHOS Y PLACAS","LOCATIVO","MEDIA","PENDIENTE",0,"TECHOS","REVISAR Y DEFINIR ESTADO","",""],
-["CIENAGA","ARREGLO DE ASCENSOR DE CARGA","ELECTROMECANICO","ALTA","PENDIENTE",1,"ASCENSOR","REVICION CONTRATISTA","Juan Riatiga",""],
-["SANTA CRUZ","BANCO DE CONDENSADORES SIN FUNCIONAR","ELECTRICO","ALTA","PENDIENTE",1,"BANCO","GESTIONAR REPARACION","Juan Riatiga",""],
-["SANTA CRUZ","INSTALAR CAMPANA COCINA","ELECTROMECANICO","ALTA","PENDIENTE",0,"CAMPANA","NUEVA SMT Y ACTULIZAR COTIZACION","Juan Riatiga","SMT-46"],
-["SANTA CRUZ","NEVERA DE BEBIDAS CON FUGA DE AGUA","REFRIGERACION","MEDIA","PENDIENTE",1,"NEVERA BEBIDAS","GESTIONAR GARANTIA INSTALACION","Juan Riatiga",""],
-["SANTA CRUZ","SIERRA DE CARNES FALLANDO","ELECTROMECANICO","ALTA","PENDIENTE",1,"SIERRA DE CARNES","EN ESPERA DE COTIZACION","Juan Riatiga",""],
-["TRANSPORTE","ALINEAR ILUMINACION Y SEGUIR CON CAMBIO LED","ELECTRICO","BAJA","PENDIENTE",0,"ILUMINACION","","Juan Riatiga",""],
-["TRANSPORTE","SIERRA DE CARNES FALLANDO","ELECTROMECANICO","ALTA","REALIZADO",1,"SIERRA DE CARNES","GESTION DE COMPRA ACTIVO","Juan Riatiga","SMT-96"],
-["TRANSPORTE","MOLINO DE CARNES DAÑADO","ELECTROMECANICO","ALTA","REALIZADO",1,"MOLINO DE CARNES","GESTION DE COMPRA ACTIVO","Juan Riatiga","SMT-97"],
-["RODADERO","CAMARA DE FERMENTACION DAÑADA","ELECTROMECANICO","ALTA","PENDIENTE",0,"CAMARA","EN ESPERA DE MOVIMIENTO DESDE SOCORRO","Juan Riatiga",""],
-["SANTA CRUZ","ASENSO DE CARGA CON FALLAS","ELECTROMECANICO","ALTA","PENDIENTE",0,"ASENSO","EN ESPERA DE OC","Juan Riatiga","SMT-45"],
-["BAVARIA","FILTRACIONES DE AGUA POR GOTERAS TECHO","LOCATIVO","ALTA","REALIZADO",1,"TECHOS","DUEÑO LOCAL REALIZO REPARACIONES","Juan Riatiga",""],
-["BAVARIA","AIRES ACONDCIONADOS FUERA DE SERVICIO","REFRIGERACION","ALTA","PROCESO",1,"AIRES","EN ESPERA DE OC","Juan Riatiga","30-31-32"],
-["BAVARIA","ILUMINACION PISO DE VENTA","ELECTRICO","MEDIA","REALIZADO",1,"ILUMINACION","REPERAR","Juan Riatiga",""],
-["CIENAGA","PISO CHUT DE BASURAS","LOCATIVO","MEDIA","PENDIENTE",0,"SHUT BASURAS","REPARAR PISO","Juan Riatiga",""],
-["MERCADO","TECHO PATIO CAIDO","LOCATIVO","ALTA","PROCESO",0.7,"OBRA CIVIL","OCT-185 EL LUNES EMPIEZA EJECUCION","Juan Riatiga","SMT-93"],
-["TRANSPORTE","EMPAQUES DE PUERTAS CUARTOS FRIOS","REFRIGERACION","MEDIA","PENDIENTE",0,"PUERTAS","COTIZAR Y GESTIONAR","Juan Riatiga",""],
-["TRANSPORTE","ARREGLO DE CIELO RAZO PARTE EXTERNA","LOCATIVO","MEDIA","PENDIENTE",0,"OBRA CIVIL","COTIZAR Y GESTIONAR","Juan Riatiga",""],
-["RODADERO","VIDRIO FACHADA QUEBRADO","INFRAESTRUCTURA","BAJA","PENDIENTE",0,"VIDRIOS","COTIZAR","Juan Riatiga",""],
-["RODADERO","AIRE ACONDICIONADO UPS","REFRIGERACION","ALTA","REALIZADO",1,"UPS","EN ESPERA DE OC","Juan Riatiga","SMT-83"],
-["RODADERO","INSTALACION REFLECTORES","INFRAESTRUCTURA","MEDIA","PROCESO",0.7,"ILUMINACION","EN PROCESO","JOSE GAMARRA",""],
-["RODADERO","INSTALACION DE UPS CAJAS ACOMETIDA","INFRAESTRUCTURA","ALTA","PENDIENTE",1,"UPS","EN ESPERA DE CLAVIJA","JOSE GAMARRA","SMT 82"],
-["SANTA CRUZ","REPARACION DE COMPRESOR RACK DE FRIO","REFRIGERACION","ALTA","REALIZADO",1,"COMPRESOR","EN ESPERA DE OC","Juan Riatiga","SMR-48"],
-["RODADERO","CAMBIO VALVULA EXPANSION NEVERA MANTEQUILLA","REFRIGERACION","ALTA","PROCESO",1,"NV MANTEQUILLAS","EN ESPERA DE OC","Juan Riatiga","SMR-82"],
-["CIENAGA","CONTROL NEVERA FRUVER","REFRIGERACION","MEDIA","PROCESO",1,"NV FRUVER","EN PROCESO COMPRAS","Juan Riatiga","SMR-30"],
-["CIENAGA","REFLECTORES ZONA RECIBO DAÑADOS","INFRAESTRUCTURA","MEDIA","REALIZADO",1,"ILUMINACION","EN PROCESO E INSTALACION","Juan Riatiga","SMT-56"],
-["CIENAGA","CAMBIO MOTOR VENTILADOR NV FRUVER","REFRIGERACION","MEDIA","REALIZADO",1,"NV FRUVER","REVISAR SI YA LLEGO","Juan Riatiga","SMR-32"],
-["TRANSPORTE","CORREAS CAMPANA DE COCINA","ELECTROMECANICO","ALTA","PENDIENTE",1,"CAMPANA","MONTAR SMT- CREAR ITEM ERP","Juan Riatiga","SMT-95"],
-["MERCADO","BALDOSAS LEVANTADAS AREA FRUVER","OBRA CIVIL","MEDIA","PENDIENTE",0,"PISO","SOLICITAR PEGACOR 1 BOLSA 25KG","Juan Riatiga",""],
-["RODADERO","ESTUCO E IMPERMEABILIZACION FACHADA","OBRA CIVIL","ALTA","PENDIENTE",0,"OBRA CIVIL","SOLICITAR MATERIAL","JOSE GAMARRA","SMT-89"],
-["CIENAGA","REPARACION PARED FRUVER","OBRA CIVIL","MEDIA","PENDIENTE",0,"OBRA CIVIL","PEDIR MATERIAL","JOSE GAMARRA",""],
-["CIENAGA","ILUMINACION PISO DE VENTA","ELECTRICO","MEDIA","PENDIENTE",0.2,"ILUMINACION","CAMBIAR LUCES","JOSE GAMARRA","SMT-60"],
-["CIENAGA","CERRADURA PUERTA CARNES","INFRAESTRUCTURA","MEDIA","REALIZADO",1,"PUERTAS","PEDIR CERRADURA","Juan Riatiga","SMT-58"],
-["CIENAGA","VIDRIO FACHADA QUEBRADO","INFRAESTRUCTURA","MEDIA","PENDIENTE",0,"PUERTAS","COTIZAR TERCERO","Juan Riatiga",""],
-["TRANSPORTE","ESTERA DE RECIBO DAÑADA","SOLDADOR","ALTA","PENDIENTE",1,"ESTERA","","JOSE GAMARRA",""],
-["RODADERO","MOJADORA PEQUEÑA FUERA DE SERVICIO","ELECTROMECANICO","MEDIA","PENDIENTE",0,"MOJADORA","COTIZADO MONTAR SOLICITUD","Juan Riatiga",""],
-["RODADERO","REPARACION DE ESCABILADEROS","ELECTROMECANICO","MEDIA","PENDIENTE",0,"ESCABILADEROS","DEFINIR PLAN DE ACCION","Juan Riatiga",""],
-["RODADERO","CONTROLADOR SALA DE PROCESO","REFRIGERACION","MEDIA","PENDIENTE",1,"CAVA PROCESO","SOLICITAR MT 512","Juan Riatiga","SMR-85"],
-["MERCADO","MONITOR DE VOLTAJE RACK DE FRIO","REFRIGERACION","ALTA","PENDIENTE",1,"RACK FRIO","SOLICITAR","Juan Riatiga","SMR-89"],
-["MERCADO","TRAMPA DE GRASA COCINA","LOCATIVO","MEDIA","PENDIENTE",0,"TRAMPA GRASA","CAMBIAR POR NUEVA","Juan Riatiga",""],
-["RODADERO","CILINDRADORNA FUERA DE SERVICIO","ELECTROMECANICO","ALTA","PENDIENTE",1,"CILINDRADORNA","SEGUIMIENTO SMT","Juan Riatiga","SMT-86"],
-["SANTA CRUZ","TURNERO DE CARNES NO HAY","LOCATIVO","BAJA","REALIZADO",1,"TURNERO","MONTAR SMT","Juan Riatiga","SMT-55"],
-["CORPORATIVO","HERRAMIENTAS VARIAS","INFRAESTRUCTURA","MEDIA","PENDIENTE",0,"MATTO","SEGUIMIENTO SMT","Juan Riatiga","SMT-1328"],
-["CORPORATIVO","MALETINES HERRAMIENTAS EQUIPO MTTO","INFRAESTRUCTURA","MEDIA","PENDIENTE",0,"MATTO","SEGUIMIENTO SMT","Juan Riatiga","SMT-1327"],
-["MERCADO","CAMBIO DE MANIFUL SUCCION","REFRIGERACION","ALTA","PENDIENTE",0,"RACK FRIO","COTIZAR","Juan Riatiga","SMR-91"],
-["RODADERO","TURNERO DE CARNES NO HAY","ELECTROMECANICO","MEDIA","PENDIENTE",1,"TURNERO","SOLICITAR","Juan Riatiga","SMT-87"],
-["SANTA CRUZ","ARREGLO DE ESTUFAS","ELECTROMECANICO","MEDIA","PENDIENTE",0,"ESTUFAS","MONTAR SMT","Juan Riatiga","SMT-56"],
-["MERCADO","REFRIGERANTE FUGA MANIFULL","REFRIGERACION","ALTA","REALIZADO",1,"RACK FRIO","EN ESPERA DE DESPACHO","Juan Riatiga","SMR-90"],
-["CIENAGA","INSTALACION DE MUEBLES POS","ELECTROMECANICO","ALTA","PENDIENTE",0,"POS","SOLICITAR MATERIAL","Juan Riatiga","SMT-61"],
-["CIENAGA","PINTURA ESCALERAS BODEGA","INFRAESTRUCTURA","MEDIA","PENDIENTE",0,"ESCALERA","SOLICITAR MATERIAL Y PROGRAMAR","Juan Riatiga",""],
-["SANTA CRUZ","AUTOCONTENIDA DAÑADA","REFRIGERACION","ALTA","PENDIENTE",0,"NV AUTOCONTENIDA","SOLICITAR REPUESTOS","Juan Riatiga","SMR-49"],
-["TRANSPORTE","CIELO RASO BAÑOS","INFRAESTRUCTURA","MEDIA","PENDIENTE",0,"OBRA CIVIL","MONTAR SMT LISTA MATERIALES","Juan Riatiga","SMT-99"],
-["CIENAGA","COMPRESOR RACK FUERA SERVICIO","REFRIGERACION","ALTA","PENDIENTE",0,"RACK FRIO","GESTIONAR GARANTIA","Juan Riatiga","SMR-34"],
-["TRANSPORTE","HORNO DE POLLOS DAÑADO","ELECTROMECANICO","MEDIA","PENDIENTE",0,"HORNO POLLOS","SEGUIMIENTO SMT","Juan Riatiga",""],
-["RODADERO","MATERIAL INSTALACION COMPRESORES","REFRIGERACION","ALTA","PENDIENTE",0.5,"RACK FRIO","GESTIONAR","Juan Riatiga","SMR-87"],
-["BAVARIA","SISTEMA DE SEGURIDAD TECHO","LOCATIVO","MEDIA","PENDIENTE",0,"LOCATIVO","ENVIAR PROPUESTA ECONOMICA","Juan Riatiga",""],
-["CORPORATIVO","DETECTOR DE FUGA","REFRIGERACION","ALTA","PENDIENTE",0,"RACK FRIO","COTIZAR","Juan Riatiga",""],
-["CIENAGA","PISO CAVA PROCESOS EN MAL ESTADO","LOCATIVO","MEDIA","PENDIENTE",0,"CAVA PROCESOS","CAMBIAR ENCHAPE","Juan Riatiga",""],
-["CIENAGA","COMPRESOR RACK FUERA SERVICIO","REFRIGERACION","ALTA","PENDIENTE",0,"RACK FRIO","GESTIONAR OC","Juan Riatiga",""],
-["RODADERO","ARREGLO DE PISO TRASTIENDA","LOCATIVO","MEDIA","PENDIENTE",0,"LOCATIVO","DEFINIR PLAN DE ACCION","Juan Riatiga",""],
-["CIENAGA","CAMBIO DE ACEITE RACK DE FRIO","REFRIGERACION","ALTA","PENDIENTE",0,"RACK FRIO","MONTAR SMR","Juan Riatiga","SMR-36"],
-["RODADERO","LUCES LINEAL LICORES","ELECTRICO","MEDIA","PENDIENTE",0,"LETRERO","REVISAR EQUIPO","JOSE GAMARRA",""],
-["MERCADO","ARREGLO PISO BODEGA","LOCATIVO","MEDIA","PENDIENTE",0,"LOCATIVO","PEDIR MATERIAL Y EJECUTAR","Juan Riatiga","SMT-94"],
-["CIENAGA","DEMOLICION PAREDES LOCALES","LOCATIVO","MEDIA","PENDIENTE",0,"LOCATIVO","DEFINIR PROVEEDOR","Juan Riatiga",""],
-["CIENAGA","ARREGLO DE CERRADURA PUERTA PRINCIPAL","LOCATIVO","MEDIA","PENDIENTE",0,"PUERTAS","GESTIONAR COMPRA","Juan Riatiga","SMT-66"],
-["RODADERO","ARREGLO DE CERRADURA PUERTA PRINCIPAL","LOCATIVO","MEDIA","PENDIENTE",0,"PUERTAS","GESTIONAR COMPRA","Juan Riatiga","SMT-91"],
-["SANTA CRUZ","ARREGLO DE CERRADURA PUERTA PRINCIPAL","LOCATIVO","MEDIA","PENDIENTE",0,"PUERTAS","GESTIONAR COMPRA","Juan Riatiga","SMT-58"],
-["TRANSPORTE","ARREGLO DE CERRADURA PUERTA PRINCIPAL","LOCATIVO","MEDIA","PENDIENTE",0,"PUERTAS","GESTIONAR COMPRA","Juan Riatiga","SMT-100"],
-["CORPORATIVO","SOLCITAR SONDA ELECTRICA","LOCATIVO","MEDIA","PENDIENTE",0,"","","",""],
-["CORPORATIVO","SOLCITAR TALADRO INALAMBRICA","LOCATIVO","MEDIA","PENDIENTE",0,"","","",""],
-["RODADERO","ADAPTADOR DE CONTROL RACK DE FRIO","REFRIGERACION","MEDIA","PENDIENTE",0,"RACK FRIO","GESTIONAR COMPRA","Juan Riatiga","SMR-92"],
-["SANTA CRUZ","ARREGLO DE POLIPASTO","ELECTROMECANICO","ALTA","PENDIENTE",0,"ASENSO","GESTIONAR OC","Juan Riatiga","SMT-59"],
-["CEDI PLIS","ARREGLOS VARIOS","ELECTROMECANICO","MEDIA","PENDIENTE",0,"VARIOS","GESTIONAR OC","Juan Riatiga","SMT-23"],
-["RODADERO","MANTENIMIENTO PLANTA EMERGENCIA","ELECTRICO","ALTA","PENDIENTE",0,"PLANTA EMERGENCIA","GESTIONAR","Juan Riatiga",""],
-["TRANSPORTE","MANTENIMIENTO PLANTA EMERGENCIA","ELECTRICO","ALTA","PENDIENTE",0,"PLANTA EMERGENCIA","GESTIONAR","Juan Riatiga",""],
-["BAVARIA","CERRAMIENTOS TECHO","LOCATIVO","ALTA","PENDIENTE",0,"LOCATIVO","GESTIONAR OC","Juan Riatiga",""],
+["CIENAGA","DEFINIR USO CAVA DE LACTEOS ( FUERA DE SERVICIO) NO TIENE PUERTA","REFRIGERACION","MEDIA","PENDIENTE",0,"CAVA LACTEOS","FALTA PUERTA PARA HABILITAR","LEONARDO ACOSTA","","",""],
+["MERCADO","CONTROL DEL RACK DE FRIO MECANICO","REFRIGERACION","MEDIA","REALIZADO",0.3,"RAKC FRIO","MONAR SMR- CREACION DE ITEMS","Juan Riatiga","","",""],
+["TRANSPORTE","AUTOMATIZACION RACK DE FRIO","REFRIGERACION","ALTA","REALIZADO",0.8,"RACK FRIO","PENDIENTE TRABAJO CON PERSONAL INTERNO","Juan Riatiga","","",""],
+["TRANSPORTE","FALTAN DOS COMPRESORES RACK FRIO BT 15 HP Y MT DE 22","REFRIGERACION","ALTA","PROCESO",0.7,"RACK FRIO","COTIZADO","Juan Riatiga","","",""],
+["SANTA CRUZ","TRAXOIL DAÑADO COMPRESOR #1 RACK","REFRIGERACION","ALTA","REALIZADO",1,"RACK FRIO","EN ESPERA DE OC","Juan Riatiga","SMR-47","",""],
+["RODADERO","REPARACION DE PISOS CUARTOS FRIOS/VENTA","INFRAESTRUCTURA","ALTA","PENDIENTE",0,"CAVA CARNES","COTIZACION A PROYECTOS Y ACABADOS","JUAN RIATIGA","","",""],
+["TRANSPORTE","MANTENIMIENTO ESTUFAS COCINA","LOCATIVO","ALTA","PROCESO",0,"ESTUFAS","WILIAN PERALES DEBE EJECUTAR ESTA SEMANA","Juan Riatiga","SMT-98","",""],
+["RODADERO","TRANSFERENCIA ELECTRICA DAÑADA","ELECTRICO","MEDIA","PENDIENTE",0,"PLANTA EMERGENCIA","REPARAR EL SISTEMA","JOSE GAMARRA","","",""],
+["RODADERO","HABILITAR CAVA DE CARNES CON DIVISION","REFRIGERACION","MEDIA","PENDIENTE",0,"CAVA CARNES","INSTALAR DIFUSORES Y DIVIDIR CAVA","Juan Riatiga","","",""],
+["RODADERO","AIRES ACONDICIONADOS FUERA DE SERVICIO","REFRIGERACION","MEDIA","PROCESO",0.8,"AIRES","DOS CONDENSADORAS FUERA DE SERVICIO","Juan Riatiga","","",""],
+["TRANSPORTE","AIRES ACONDCIONADOS","REFRIGERACION","MEDIA","PROCESO",0.8,"AIRES","COMPRAR 1 UNIDAD CONDENSADORA DE 10 HP","Juan Riatiga","","",""],
+["RODADERO","RACK DE FRIO COMPRESORES","REFRIGERACION","ALTA","PROCESO",1,"RACK FRIO","OCT-","Juan Riatiga","SMR-84","",""],
+["RODADERO","PRESURIZACIÓN DE SISTEMA RCI","HIDRAULICO","MEDIA","PENDIENTE",0,"RCI","PERSONAL INTERNO DEBE REALIZAR ESTE TRABAJO","JOSE GAMARRA","","",""],
+["RODADERO","CUARTO FRIO DE CONGELACION MAL ESTADO","LOCATIVO","ALTA","PENDIENTE",0,"CAVA CONGELACION","CONSTRUCCION DE CUARTO NUEVO","Juan Riatiga","","",""],
+["TRANSPORTE","ADECUACION CAVA DE CARNES","REFRIGERACION","MEDIA","PENDIENTE",0,"CAVA CARNES","COTIZAR PANELES","JUAN RIATIGA","","",""],
+["TRANSPORTE","ARREGLOS DE BAÑOS CLIENTES","LOCATIVO","MEDIA","PENDIENTE",0.8,"HIDROSANITARIO","PONER AGUA EN LOS BAÑOS","Juan Riatiga","","",""],
+["SANTA CRUZ","BALDOSAS AREA SAC","LOCATIVO","MEDIA","PROCESO",1,"SAC","COMPRAR Y REALIZAR","Juan Riatiga","","",""],
+["CIENAGA","ARREGLO DE BAÑOS CLIENTES","OBRA CIVIL","ALTA","PENDIENTE",0,"BAÑOS","COTIZAR CON TERCEROS","Juan Riatiga","","",""],
+["CIENAGA","ARREGLO TAPA TRAMPA DE GRASA EXTERNA","OBRA CIVIL","MEDIA","PENDIENTE",1,"TRAMPA GRASA","COTIZAR CON TERCEROS","Juan Riatiga","","",""],
+["MAGDALENA","GOTERAS EN TECHOS Y PLACAS","LOCATIVO","MEDIA","PENDIENTE",0,"TECHOS","REVISAR Y DEFINIR ESTADO","","","",""],
+["CIENAGA","ARREGLO DE ASCENSOR DE CARGA","ELECTROMECANICO","ALTA","PENDIENTE",1,"ASCENSOR","REVICION CONTRATISTA","Juan Riatiga","","",""],
+["SANTA CRUZ","BANCO DE CONDENSADORES SIN FUNCIONAR","ELECTRICO","ALTA","PENDIENTE",1,"BANCO","GESTIONAR REPARACION","Juan Riatiga","","",""],
+["SANTA CRUZ","INSTALAR CAMPANA COCINA","ELECTROMECANICO","ALTA","PENDIENTE",0,"CAMPANA","NUEVA SMT Y ACTULIZAR COTIZACION","Juan Riatiga","SMT-46","",""],
+["SANTA CRUZ","NEVERA DE BEBIDAS CON FUGA DE AGUA","REFRIGERACION","MEDIA","PENDIENTE",1,"NEVERA BEBIDAS","GESTIONAR GARANTIA INSTALACION","Juan Riatiga","","",""],
+["SANTA CRUZ","SIERRA DE CARNES FALLANDO","ELECTROMECANICO","ALTA","PENDIENTE",1,"SIERRA DE CARNES","EN ESPERA DE COTIZACION","Juan Riatiga","","",""],
+["TRANSPORTE","ALINEAR ILUMINACION Y SEGUIR CON CAMBIO LED","ELECTRICO","BAJA","PENDIENTE",0,"ILUMINACION","","Juan Riatiga","","",""],
+["TRANSPORTE","SIERRA DE CARNES FALLANDO","ELECTROMECANICO","ALTA","REALIZADO",1,"SIERRA DE CARNES","GESTION DE COMPRA ACTIVO","Juan Riatiga","SMT-96","",""],
+["TRANSPORTE","MOLINO DE CARNES DAÑADO","ELECTROMECANICO","ALTA","REALIZADO",1,"MOLINO DE CARNES","GESTION DE COMPRA ACTIVO","Juan Riatiga","SMT-97","",""],
+["RODADERO","CAMARA DE FERMENTACION DAÑADA","ELECTROMECANICO","ALTA","PENDIENTE",0,"CAMARA","EN ESPERA DE MOVIMIENTO DESDE SOCORRO","Juan Riatiga","","",""],
+["SANTA CRUZ","ASENSO DE CARGA CON FALLAS","ELECTROMECANICO","ALTA","PENDIENTE",0,"ASENSO","EN ESPERA DE OC","Juan Riatiga","SMT-45","",""],
+["BAVARIA","FILTRACIONES DE AGUA POR GOTERAS TECHO","LOCATIVO","ALTA","REALIZADO",1,"TECHOS","DUEÑO LOCAL REALIZO REPARACIONES","Juan Riatiga","","",""],
+["BAVARIA","AIRES ACONDCIONADOS FUERA DE SERVICIO","REFRIGERACION","ALTA","PROCESO",1,"AIRES","EN ESPERA DE OC","Juan Riatiga","30-31-32","",""],
+["BAVARIA","ILUMINACION PISO DE VENTA","ELECTRICO","MEDIA","REALIZADO",1,"ILUMINACION","REPERAR","Juan Riatiga","","",""],
+["CIENAGA","PISO CHUT DE BASURAS","LOCATIVO","MEDIA","PENDIENTE",0,"SHUT BASURAS","REPARAR PISO","Juan Riatiga","","",""],
+["MERCADO","TECHO PATIO CAIDO","LOCATIVO","ALTA","PROCESO",0.7,"OBRA CIVIL","OCT-185 EL LUNES EMPIEZA EJECUCION","Juan Riatiga","SMT-93","",""],
+["TRANSPORTE","EMPAQUES DE PUERTAS CUARTOS FRIOS","REFRIGERACION","MEDIA","PENDIENTE",0,"PUERTAS","COTIZAR Y GESTIONAR","Juan Riatiga","","",""],
+["TRANSPORTE","ARREGLO DE CIELO RAZO PARTE EXTERNA","LOCATIVO","MEDIA","PENDIENTE",0,"OBRA CIVIL","COTIZAR Y GESTIONAR","Juan Riatiga","","",""],
+["RODADERO","VIDRIO FACHADA QUEBRADO","INFRAESTRUCTURA","BAJA","PENDIENTE",0,"VIDRIOS","COTIZAR","Juan Riatiga","","",""],
+["RODADERO","AIRE ACONDICIONADO UPS","REFRIGERACION","ALTA","REALIZADO",1,"UPS","EN ESPERA DE OC","Juan Riatiga","SMT-83","",""],
+["RODADERO","INSTALACION REFLECTORES","INFRAESTRUCTURA","MEDIA","PROCESO",0.7,"ILUMINACION","EN PROCESO","JOSE GAMARRA","","",""],
+["RODADERO","INSTALACION DE UPS CAJAS ACOMETIDA","INFRAESTRUCTURA","ALTA","PENDIENTE",1,"UPS","EN ESPERA DE CLAVIJA","JOSE GAMARRA","SMT 82","",""],
+["SANTA CRUZ","REPARACION DE COMPRESOR RACK DE FRIO","REFRIGERACION","ALTA","REALIZADO",1,"COMPRESOR","EN ESPERA DE OC","Juan Riatiga","SMR-48","",""],
+["RODADERO","CAMBIO VALVULA EXPANSION NEVERA MANTEQUILLA","REFRIGERACION","ALTA","PROCESO",1,"NV MANTEQUILLAS","EN ESPERA DE OC","Juan Riatiga","SMR-82","",""],
+["CIENAGA","CONTROL NEVERA FRUVER","REFRIGERACION","MEDIA","PROCESO",1,"NV FRUVER","EN PROCESO COMPRAS","Juan Riatiga","SMR-30","",""],
+["CIENAGA","REFLECTORES ZONA RECIBO DAÑADOS","INFRAESTRUCTURA","MEDIA","REALIZADO",1,"ILUMINACION","EN PROCESO E INSTALACION","Juan Riatiga","SMT-56","",""],
+["CIENAGA","CAMBIO MOTOR VENTILADOR NV FRUVER","REFRIGERACION","MEDIA","REALIZADO",1,"NV FRUVER","REVISAR SI YA LLEGO","Juan Riatiga","SMR-32","",""],
+["TRANSPORTE","CORREAS CAMPANA DE COCINA","ELECTROMECANICO","ALTA","PENDIENTE",1,"CAMPANA","MONTAR SMT- CREAR ITEM ERP","Juan Riatiga","SMT-95","",""],
+["MERCADO","BALDOSAS LEVANTADAS AREA FRUVER","OBRA CIVIL","MEDIA","PENDIENTE",0,"PISO","SOLICITAR PEGACOR 1 BOLSA 25KG","Juan Riatiga","","",""],
+["RODADERO","ESTUCO E IMPERMEABILIZACION FACHADA","OBRA CIVIL","ALTA","PENDIENTE",0,"OBRA CIVIL","SOLICITAR MATERIAL","JOSE GAMARRA","SMT-89","",""],
+["CIENAGA","REPARACION PARED FRUVER","OBRA CIVIL","MEDIA","PENDIENTE",0,"OBRA CIVIL","PEDIR MATERIAL","JOSE GAMARRA","","",""],
+["CIENAGA","ILUMINACION PISO DE VENTA","ELECTRICO","MEDIA","PENDIENTE",0.2,"ILUMINACION","CAMBIAR LUCES","JOSE GAMARRA","SMT-60","",""],
+["CIENAGA","CERRADURA PUERTA CARNES","INFRAESTRUCTURA","MEDIA","REALIZADO",1,"PUERTAS","PEDIR CERRADURA","Juan Riatiga","SMT-58","",""],
+["CIENAGA","VIDRIO FACHADA QUEBRADO","INFRAESTRUCTURA","MEDIA","PENDIENTE",0,"PUERTAS","COTIZAR TERCERO","Juan Riatiga","","",""],
+["TRANSPORTE","ESTERA DE RECIBO DAÑADA","SOLDADOR","ALTA","PENDIENTE",1,"ESTERA","","JOSE GAMARRA","","",""],
+["RODADERO","MOJADORA PEQUEÑA FUERA DE SERVICIO","ELECTROMECANICO","MEDIA","PENDIENTE",0,"MOJADORA","COTIZADO MONTAR SOLICITUD","Juan Riatiga","","",""],
+["RODADERO","REPARACION DE ESCABILADEROS","ELECTROMECANICO","MEDIA","PENDIENTE",0,"ESCABILADEROS","DEFINIR PLAN DE ACCION","Juan Riatiga","","",""],
+["RODADERO","CONTROLADOR SALA DE PROCESO","REFRIGERACION","MEDIA","PENDIENTE",1,"CAVA PROCESO","SOLICITAR MT 512","Juan Riatiga","SMR-85","",""],
+["MERCADO","MONITOR DE VOLTAJE RACK DE FRIO","REFRIGERACION","ALTA","PENDIENTE",1,"RACK FRIO","SOLICITAR","Juan Riatiga","SMR-89","",""],
+["MERCADO","TRAMPA DE GRASA COCINA","LOCATIVO","MEDIA","PENDIENTE",0,"TRAMPA GRASA","CAMBIAR POR NUEVA","Juan Riatiga","","",""],
+["RODADERO","CILINDRADORNA FUERA DE SERVICIO","ELECTROMECANICO","ALTA","PENDIENTE",1,"CILINDRADORNA","SEGUIMIENTO SMT","Juan Riatiga","SMT-86","",""],
+["SANTA CRUZ","TURNERO DE CARNES NO HAY","LOCATIVO","BAJA","REALIZADO",1,"TURNERO","MONTAR SMT","Juan Riatiga","SMT-55","",""],
+["CORPORATIVO","HERRAMIENTAS VARIAS","INFRAESTRUCTURA","MEDIA","PENDIENTE",0,"MATTO","SEGUIMIENTO SMT","Juan Riatiga","SMT-1328","",""],
+["CORPORATIVO","MALETINES HERRAMIENTAS EQUIPO MTTO","INFRAESTRUCTURA","MEDIA","PENDIENTE",0,"MATTO","SEGUIMIENTO SMT","Juan Riatiga","SMT-1327","",""],
+["MERCADO","CAMBIO DE MANIFUL SUCCION","REFRIGERACION","ALTA","PENDIENTE",0,"RACK FRIO","COTIZAR","Juan Riatiga","SMR-91","",""],
+["RODADERO","TURNERO DE CARNES NO HAY","ELECTROMECANICO","MEDIA","PENDIENTE",1,"TURNERO","SOLICITAR","Juan Riatiga","SMT-87","",""],
+["SANTA CRUZ","ARREGLO DE ESTUFAS","ELECTROMECANICO","MEDIA","PENDIENTE",0,"ESTUFAS","MONTAR SMT","Juan Riatiga","SMT-56","",""],
+["MERCADO","REFRIGERANTE FUGA MANIFULL","REFRIGERACION","ALTA","REALIZADO",1,"RACK FRIO","EN ESPERA DE DESPACHO","Juan Riatiga","SMR-90","",""],
+["CIENAGA","INSTALACION DE MUEBLES POS","ELECTROMECANICO","ALTA","PENDIENTE",0,"POS","SOLICITAR MATERIAL","Juan Riatiga","SMT-61","",""],
+["CIENAGA","PINTURA ESCALERAS BODEGA","INFRAESTRUCTURA","MEDIA","PENDIENTE",0,"ESCALERA","SOLICITAR MATERIAL Y PROGRAMAR","Juan Riatiga","","",""],
+["SANTA CRUZ","AUTOCONTENIDA DAÑADA","REFRIGERACION","ALTA","PENDIENTE",0,"NV AUTOCONTENIDA","SOLICITAR REPUESTOS","Juan Riatiga","SMR-49","",""],
+["TRANSPORTE","CIELO RASO BAÑOS","INFRAESTRUCTURA","MEDIA","PENDIENTE",0,"OBRA CIVIL","MONTAR SMT LISTA MATERIALES","Juan Riatiga","SMT-99","",""],
+["CIENAGA","COMPRESOR RACK FUERA SERVICIO","REFRIGERACION","ALTA","PENDIENTE",0,"RACK FRIO","GESTIONAR GARANTIA","Juan Riatiga","SMR-34","",""],
+["TRANSPORTE","HORNO DE POLLOS DAÑADO","ELECTROMECANICO","MEDIA","PENDIENTE",0,"HORNO POLLOS","SEGUIMIENTO SMT","Juan Riatiga","","",""],
+["RODADERO","MATERIAL INSTALACION COMPRESORES","REFRIGERACION","ALTA","PENDIENTE",0.5,"RACK FRIO","GESTIONAR","Juan Riatiga","SMR-87","",""],
+["BAVARIA","SISTEMA DE SEGURIDAD TECHO","LOCATIVO","MEDIA","PENDIENTE",0,"LOCATIVO","ENVIAR PROPUESTA ECONOMICA","Juan Riatiga","","",""],
+["CORPORATIVO","DETECTOR DE FUGA","REFRIGERACION","ALTA","PENDIENTE",0,"RACK FRIO","COTIZAR","Juan Riatiga","","",""],
+["CIENAGA","PISO CAVA PROCESOS EN MAL ESTADO","LOCATIVO","MEDIA","PENDIENTE",0,"CAVA PROCESOS","CAMBIAR ENCHAPE","Juan Riatiga","","",""],
+["CIENAGA","COMPRESOR RACK FUERA SERVICIO","REFRIGERACION","ALTA","PENDIENTE",0,"RACK FRIO","GESTIONAR OC","Juan Riatiga","","",""],
+["RODADERO","ARREGLO DE PISO TRASTIENDA","LOCATIVO","MEDIA","PENDIENTE",0,"LOCATIVO","DEFINIR PLAN DE ACCION","Juan Riatiga","","",""],
+["CIENAGA","CAMBIO DE ACEITE RACK DE FRIO","REFRIGERACION","ALTA","PENDIENTE",0,"RACK FRIO","MONTAR SMR","Juan Riatiga","SMR-36","",""],
+["RODADERO","LUCES LINEAL LICORES","ELECTRICO","MEDIA","PENDIENTE",0,"LETRERO","REVISAR EQUIPO","JOSE GAMARRA","","",""],
+["MERCADO","ARREGLO PISO BODEGA","LOCATIVO","MEDIA","PENDIENTE",0,"LOCATIVO","PEDIR MATERIAL Y EJECUTAR","Juan Riatiga","SMT-94","",""],
+["CIENAGA","DEMOLICION PAREDES LOCALES","LOCATIVO","MEDIA","PENDIENTE",0,"LOCATIVO","DEFINIR PROVEEDOR","Juan Riatiga","","",""],
+["CIENAGA","ARREGLO DE CERRADURA PUERTA PRINCIPAL","LOCATIVO","MEDIA","PENDIENTE",0,"PUERTAS","GESTIONAR COMPRA","Juan Riatiga","SMT-66","",""],
+["RODADERO","ARREGLO DE CERRADURA PUERTA PRINCIPAL","LOCATIVO","MEDIA","PENDIENTE",0,"PUERTAS","GESTIONAR COMPRA","Juan Riatiga","SMT-91","",""],
+["SANTA CRUZ","ARREGLO DE CERRADURA PUERTA PRINCIPAL","LOCATIVO","MEDIA","PENDIENTE",0,"PUERTAS","GESTIONAR COMPRA","Juan Riatiga","SMT-58","",""],
+["TRANSPORTE","ARREGLO DE CERRADURA PUERTA PRINCIPAL","LOCATIVO","MEDIA","PENDIENTE",0,"PUERTAS","GESTIONAR COMPRA","Juan Riatiga","SMT-100","",""],
+["CORPORATIVO","SOLCITAR SONDA ELECTRICA","LOCATIVO","MEDIA","PENDIENTE",0,"","","","","",""],
+["CORPORATIVO","SOLCITAR TALADRO INALAMBRICA","LOCATIVO","MEDIA","PENDIENTE",0,"","","","","",""],
+["RODADERO","ADAPTADOR DE CONTROL RACK DE FRIO","REFRIGERACION","MEDIA","PENDIENTE",0,"RACK FRIO","GESTIONAR COMPRA","Juan Riatiga","SMR-92","",""],
+["SANTA CRUZ","ARREGLO DE POLIPASTO","ELECTROMECANICO","ALTA","PENDIENTE",0,"ASENSO","GESTIONAR OC","Juan Riatiga","SMT-59","",""],
+["CEDI PLIS","ARREGLOS VARIOS","ELECTROMECANICO","MEDIA","PENDIENTE",0,"VARIOS","GESTIONAR OC","Juan Riatiga","SMT-23","",""],
+["RODADERO","MANTENIMIENTO PLANTA EMERGENCIA","ELECTRICO","ALTA","PENDIENTE",0,"PLANTA EMERGENCIA","GESTIONAR","Juan Riatiga","","",""],
+["TRANSPORTE","MANTENIMIENTO PLANTA EMERGENCIA","ELECTRICO","ALTA","PENDIENTE",0,"PLANTA EMERGENCIA","GESTIONAR","Juan Riatiga","","",""],
+["BAVARIA","CERRAMIENTOS TECHO","LOCATIVO","ALTA","PENDIENTE",0,"LOCATIVO","GESTIONAR OC","Juan Riatiga","","",""],
 ];
 
-let data = DATA_RAW.map((r,i)=>({id:i,tienda:r[0],desc:r[1],dep:r[2],prio:r[3],estado:r[4],avance:r[5],equipo:r[6],plan:r[7],resp:r[8],smt:r[9]}));
+// índices del array: 0=tienda,1=desc,2=dep,3=prio,4=estado,5=avance,6=equipo,7=plan,8=resp,9=smt,10=fecha_inc,11=fecha_cierre
+let data = DATA_RAW.map((r,i)=>({
+  id:i, tienda:r[0], desc:r[1], dep:r[2], prio:r[3], estado:r[4],
+  avance:r[5], equipo:r[6], plan:r[7], resp:r[8], smt:r[9],
+  fecha_inc:r[10]||'', fecha_cierre:r[11]||''
+}));
 let editId = null;
 
 // Date
 document.getElementById('hdr-fecha').textContent = new Date().toLocaleDateString('es-CO',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 
 function norm(s){ return (s||'').toUpperCase().replace(/[ÓÁÉÍÚ]/g,c=>({Ó:'O',Á:'A',É:'E',Í:'I',Ú:'U'}[c]||c)).trim(); }
+
+function fmtDate(s) {
+  if(!s) return '—';
+  const [y,m,d] = s.split('-');
+  return `${d}/${m}/${y}`;
+}
 
 // ── NOTIFICATION ──────────────────────────────────────────────────────────────
 function notify(msg) {
@@ -789,7 +804,7 @@ function updateCharts() {
   const nReal = data.filter(d=>norm(d.estado)==='REALIZADO').length;
   const nProc = data.filter(d=>norm(d.estado)==='PROCESO').length;
   const nPend = data.filter(d=>norm(d.estado)==='PENDIENTE').length;
-  const C = 2*Math.PI*42; // circumference
+  const C = 2*Math.PI*42;
   const pReal = nReal/total, pProc = nProc/total, pPend = nPend/total;
   document.getElementById('d-real').style.strokeDasharray = `${pReal*C} ${C}`;
   document.getElementById('d-proc').style.strokeDasharray = `${pProc*C} ${C}`;
@@ -877,7 +892,7 @@ function render() {
 
   const tbody = document.getElementById('tbl');
   if(!filtered.length) {
-    tbody.innerHTML = `<tr><td colspan="10" class="empty">No se encontraron tareas con los filtros seleccionados.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="12" class="empty">No se encontraron tareas con los filtros seleccionados.</td></tr>`;
     return;
   }
   tbody.innerHTML = filtered.map(d => {
@@ -892,6 +907,8 @@ function render() {
       <td style="font-size:11px;color:var(--text2)">${d.equipo||'—'}</td>
       <td style="font-size:11px;white-space:nowrap">${d.resp||'—'}</td>
       <td class="td-mono">${d.smt||'—'}</td>
+      <td class="td-mono">${fmtDate(d.fecha_inc)}</td>
+      <td class="td-mono">${fmtDate(d.fecha_cierre)}</td>
       <td><div class="actions">
         ${!isReal?`<button class="act-btn done" onclick="completeTask(${d.id})" title="Marcar como realizado">✓</button>`:''}
         <button class="act-btn" onclick="editTask(${d.id})" title="Editar">✏</button>
@@ -913,16 +930,18 @@ function editTask(id) {
   const t = data.find(d=>String(d.id)===String(id)); if(!t) return;
   editId = id;
   document.getElementById('modal-title').textContent = 'Editar tarea';
-  document.getElementById('f-desc').value   = t.desc;
-  document.getElementById('f-tienda').value = t.tienda;
-  document.getElementById('f-dep').value    = t.dep;
-  document.getElementById('f-prio').value   = t.prio;
-  document.getElementById('f-estado').value = t.estado;
-  document.getElementById('f-avance').value = t.avance;
-  document.getElementById('f-equipo').value = t.equipo||'';
-  document.getElementById('f-resp').value   = t.resp||'';
-  document.getElementById('f-smt').value    = t.smt||'';
-  document.getElementById('f-plan').value   = t.plan||'';
+  document.getElementById('f-desc').value        = t.desc;
+  document.getElementById('f-tienda').value      = t.tienda;
+  document.getElementById('f-dep').value         = t.dep;
+  document.getElementById('f-prio').value        = t.prio;
+  document.getElementById('f-estado').value      = t.estado;
+  document.getElementById('f-avance').value      = t.avance;
+  document.getElementById('f-equipo').value      = t.equipo||'';
+  document.getElementById('f-resp').value        = t.resp||'';
+  document.getElementById('f-smt').value         = t.smt||'';
+  document.getElementById('f-plan').value        = t.plan||'';
+  document.getElementById('f-fecha-inc').value   = t.fecha_inc||'';
+  document.getElementById('f-fecha-cierre').value = t.fecha_cierre||'';
   document.getElementById('overlay').classList.add('open');
 }
 
@@ -930,7 +949,7 @@ function editTask(id) {
 function openModal() {
   editId = null;
   document.getElementById('modal-title').textContent = 'Nueva tarea';
-  ['f-desc','f-equipo','f-resp','f-smt','f-plan'].forEach(id=>document.getElementById(id).value='');
+  ['f-desc','f-equipo','f-resp','f-smt','f-plan','f-fecha-inc','f-fecha-cierre'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('f-avance').value = 0;
   document.getElementById('f-tienda').selectedIndex = 0;
   document.getElementById('f-dep').selectedIndex = 0;
@@ -945,15 +964,17 @@ function saveTask() {
   let estado = document.getElementById('f-estado').value;
   if(avance >= 1 && norm(estado) !== 'REALIZADO') estado = 'REALIZADO';
   const task = {
-    tienda: document.getElementById('f-tienda').value,
-    desc:   document.getElementById('f-desc').value,
-    dep:    document.getElementById('f-dep').value,
-    prio:   document.getElementById('f-prio').value,
+    tienda:      document.getElementById('f-tienda').value,
+    desc:        document.getElementById('f-desc').value,
+    dep:         document.getElementById('f-dep').value,
+    prio:        document.getElementById('f-prio').value,
     estado, avance,
-    equipo: document.getElementById('f-equipo').value,
-    plan:   document.getElementById('f-plan').value,
-    resp:   document.getElementById('f-resp').value,
-    smt:    document.getElementById('f-smt').value,
+    equipo:      document.getElementById('f-equipo').value,
+    plan:        document.getElementById('f-plan').value,
+    resp:        document.getElementById('f-resp').value,
+    smt:         document.getElementById('f-smt').value,
+    fecha_inc:   document.getElementById('f-fecha-inc').value,
+    fecha_cierre:document.getElementById('f-fecha-cierre').value,
   };
   if(editId !== null) {
     const idx = data.findIndex(d=>d.id===editId);
@@ -966,7 +987,7 @@ function saveTask() {
   closeModal(); render(); updateCharts(); populateFilters();
 }
 
-// ── GOOGLE SHEETS API (JSONP para evitar bloqueo CORS) ────────────────────────
+// ── GOOGLE SHEETS API ─────────────────────────────────────────────────────────
 const API_URL = 'https://script.google.com/macros/s/AKfycbwBu6RI6POYyFJgrlXjnw271B_6KtdCi0C09guqP4tR4Lg56PBqAX1UjoEaW9_i5LJC/exec';
 
 function updateStorageLabel(msg, color) {
@@ -976,7 +997,6 @@ function updateStorageLabel(msg, color) {
   lbl.textContent = msg || '';
 }
 
-// JSONP: carga datos inyectando un <script> para evitar bloqueo CORS de Google
 function jsonpGet() {
   return new Promise((resolve, reject) => {
     const cbName = '_gcb_' + Date.now();
@@ -996,16 +1016,22 @@ function jsonpGet() {
 }
 
 function sheetRecord(t) {
-  return { ID:String(t.id), TIENDA:t.tienda, DESCRIPCION:t.desc, DEPENDENCIA:t.dep,
+  return {
+    ID:String(t.id), TIENDA:t.tienda, DESCRIPCION:t.desc, DEPENDENCIA:t.dep,
     PRIORIDAD:t.prio, ESTADO:t.estado, AVANCE:t.avance, EQUIPO:t.equipo,
-    PLAN:t.plan, RESPONSABLE:t.resp, SMT:t.smt };
+    PLAN:t.plan, RESPONSABLE:t.resp, SMT:t.smt,
+    FECHA_INC:t.fecha_inc||'', FECHA_CIERRE:t.fecha_cierre||''
+  };
 }
 
 function mapRow(row) {
-  return { id:String(row.ID||Date.now()), tienda:row.TIENDA||'', desc:row.DESCRIPCION||'',
+  return {
+    id:String(row.ID||Date.now()), tienda:row.TIENDA||'', desc:row.DESCRIPCION||'',
     dep:row.DEPENDENCIA||'', prio:row.PRIORIDAD||'MEDIA', estado:row.ESTADO||'PENDIENTE',
     avance:parseFloat(row.AVANCE)||0, equipo:row.EQUIPO||'', plan:row.PLAN||'',
-    resp:row.RESPONSABLE||'', smt:row.SMT||'' };
+    resp:row.RESPONSABLE||'', smt:row.SMT||'',
+    fecha_inc:row.FECHA_INC||'', fecha_cierre:row.FECHA_CIERRE||''
+  };
 }
 
 async function apiPost(payload) {
@@ -1031,14 +1057,22 @@ async function loadFromSheets() {
   } catch(e) {
     console.warn('Sheets no disponible, usando datos locales:', e);
     updateStorageLabel('⚠ Sin conexión con Sheets — datos locales', 'var(--amber)');
-    data = DATA_RAW.map((r,i)=>({id:String(i),tienda:r[0],desc:r[1],dep:r[2],prio:r[3],estado:r[4],avance:r[5],equipo:r[6],plan:r[7],resp:r[8],smt:r[9]}));
+    data = DATA_RAW.map((r,i)=>({
+      id:String(i), tienda:r[0], desc:r[1], dep:r[2], prio:r[3], estado:r[4],
+      avance:r[5], equipo:r[6], plan:r[7], resp:r[8], smt:r[9],
+      fecha_inc:r[10]||'', fecha_cierre:r[11]||''
+    }));
   }
   populateFilters(); updateCharts(); render();
 }
 
 async function uploadDefaultData() {
   updateStorageLabel('Primera vez: subiendo datos al Sheet...', 'var(--amber)');
-  data = DATA_RAW.map((r,i)=>({id:String(i),tienda:r[0],desc:r[1],dep:r[2],prio:r[3],estado:r[4],avance:r[5],equipo:r[6],plan:r[7],resp:r[8],smt:r[9]}));
+  data = DATA_RAW.map((r,i)=>({
+    id:String(i), tienda:r[0], desc:r[1], dep:r[2], prio:r[3], estado:r[4],
+    avance:r[5], equipo:r[6], plan:r[7], resp:r[8], smt:r[9],
+    fecha_inc:r[10]||'', fecha_cierre:r[11]||''
+  }));
   for (const t of data) {
     try { await fetch(API_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'insert',record:sheetRecord(t)})}); } catch(e) {}
   }
@@ -1073,11 +1107,17 @@ saveTask = function() {
   let estado = document.getElementById('f-estado').value;
   if(avance >= 1 && norm(estado) !== 'REALIZADO') estado = 'REALIZADO';
   const task = {
-    tienda:document.getElementById('f-tienda').value, desc:document.getElementById('f-desc').value,
-    dep:document.getElementById('f-dep').value, prio:document.getElementById('f-prio').value,
-    estado, avance, equipo:document.getElementById('f-equipo').value,
-    plan:document.getElementById('f-plan').value, resp:document.getElementById('f-resp').value,
-    smt:document.getElementById('f-smt').value,
+    tienda:      document.getElementById('f-tienda').value,
+    desc:        document.getElementById('f-desc').value,
+    dep:         document.getElementById('f-dep').value,
+    prio:        document.getElementById('f-prio').value,
+    estado, avance,
+    equipo:      document.getElementById('f-equipo').value,
+    plan:        document.getElementById('f-plan').value,
+    resp:        document.getElementById('f-resp').value,
+    smt:         document.getElementById('f-smt').value,
+    fecha_inc:   document.getElementById('f-fecha-inc').value,
+    fecha_cierre:document.getElementById('f-fecha-cierre').value,
   };
   if(editId !== null) {
     const idx = data.findIndex(d=>String(d.id)===String(editId));
