@@ -471,6 +471,27 @@ td {
 }
 .storage-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--real); flex-shrink: 0; }
 
+/* ── DÍAS VENCIDOS BADGE ── */
+.dias-ok   { color: var(--real);  font-family:'DM Mono',monospace; font-size:11px; }
+.dias-warn { color: var(--amber); font-family:'DM Mono',monospace; font-size:11px; font-weight:600; }
+.dias-over { color: var(--rose);  font-family:'DM Mono',monospace; font-size:11px; font-weight:700; }
+.dias-badge {
+  display:inline-block; padding:2px 7px; border-radius:6px;
+  font-family:'DM Mono',monospace; font-size:11px; font-weight:600; white-space:nowrap;
+}
+.dias-badge.ok   { background:rgba(34,197,94,0.12);  color:var(--real); }
+.dias-badge.warn { background:rgba(245,158,11,0.14); color:var(--amber); }
+.dias-badge.over { background:rgba(244,63,94,0.14);  color:var(--rose); }
+.dias-badge.done { background:rgba(255,255,255,0.05);color:var(--text3); }
+
+/* ── SMT/SMR FILTER PILL ── */
+.smt-pill {
+  display:inline-block; padding:2px 8px; border-radius:999px;
+  font-size:10px; font-weight:600; letter-spacing:0.3px; white-space:nowrap;
+}
+.smt-pill.smt { background:rgba(139,92,246,0.15); color:#a78bfa; }
+.smt-pill.smr { background:rgba(20,184,166,0.15);  color:var(--teal); }
+
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
@@ -574,6 +595,7 @@ td {
     <select id="fil-tienda"><option value="">Todas las tiendas</option></select>
     <select id="fil-estado"><option value="">Todos los estados</option><option>PENDIENTE</option><option>PROCESO</option><option>REALIZADO</option></select>
     <select id="fil-prio"><option value="">Toda prioridad</option><option>ALTA</option><option>MEDIA</option><option>BAJA</option></select>
+    <select id="fil-smt"><option value="">SMT / SMR / Todos</option><option value="SMT">Solo SMT</option><option value="SMR">Solo SMR</option><option value="SIN">Sin orden</option></select>
     <button class="btn-new" onclick="openModal()">+ Nueva tarea</button>
     <div class="count-badge" id="count-badge">0 tareas</div>
     <button class="btn-reset" onclick="resetData()" title="Restaurar datos originales">↺ Reset</button>
@@ -599,6 +621,7 @@ td {
           <th>SMT/SMR</th>
           <th>F. Incidencia</th>
           <th>F. Cierre</th>
+          <th>Días Venc.</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -853,13 +876,32 @@ function getFiltered() {
   const ft = document.getElementById('fil-tienda').value;
   const fe = document.getElementById('fil-estado').value;
   const fp = document.getElementById('fil-prio').value;
+  const fs = document.getElementById('fil-smt').value;
   return data.filter(d => {
     if(q && !`${d.tienda} ${d.desc} ${d.resp} ${d.plan} ${d.smt}`.toLowerCase().includes(q)) return false;
     if(ft && d.tienda !== ft) return false;
     if(fe && norm(d.estado) !== norm(fe)) return false;
     if(fp && norm(d.prio) !== norm(fp)) return false;
+    if(fs) {
+      const s = (d.smt||'').toUpperCase();
+      if(fs==='SMT' && !s.includes('SMT')) return false;
+      if(fs==='SMR' && !s.includes('SMR')) return false;
+      if(fs==='SIN' && s.trim()!=='') return false;
+    }
     return true;
   });
+}
+
+function diasVencidos(fecha_inc, estado) {
+  if(norm(estado)==='REALIZADO') return {dias:0, cls:'done', label:'—'};
+  if(!fecha_inc) return {dias:null, cls:'done', label:'—'};
+  const hoy = new Date(); hoy.setHours(0,0,0,0);
+  const inc  = new Date(fecha_inc); inc.setHours(0,0,0,0);
+  const d    = Math.floor((hoy - inc)/(1000*60*60*24));
+  if(d < 0)   return {dias:d,   cls:'ok',   label:`${Math.abs(d)}d restantes`};
+  if(d <= 30) return {dias:d,   cls:'ok',   label:`${d}d`};
+  if(d <= 90) return {dias:d,   cls:'warn', label:`${d}d`};
+  return               {dias:d, cls:'over', label:`${d}d`};
 }
 
 // ── RENDER ────────────────────────────────────────────────────────────────────
@@ -892,11 +934,17 @@ function render() {
 
   const tbody = document.getElementById('tbl');
   if(!filtered.length) {
-    tbody.innerHTML = `<tr><td colspan="12" class="empty">No se encontraron tareas con los filtros seleccionados.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="13" class="empty">No se encontraron tareas con los filtros seleccionados.</td></tr>`;
     return;
   }
   tbody.innerHTML = filtered.map(d => {
     const isReal = norm(d.estado)==='REALIZADO';
+    const dv     = diasVencidos(d.fecha_inc, d.estado);
+    const smtVal = d.smt||'';
+    const smtCls = smtVal.toUpperCase().includes('SMT') ? 'smt' : smtVal.toUpperCase().includes('SMR') ? 'smr' : '';
+    const smtHtml = smtVal
+      ? `<span class="smt-pill ${smtCls}">${smtVal}</span>`
+      : '—';
     return `<tr>
       <td class="td-tienda">${d.tienda}</td>
       <td class="td-desc">${d.desc}</td>
@@ -906,9 +954,10 @@ function render() {
       <td>${progBar(d.avance)}</td>
       <td style="font-size:11px;color:var(--text2)">${d.equipo||'—'}</td>
       <td style="font-size:11px;white-space:nowrap">${d.resp||'—'}</td>
-      <td class="td-mono">${d.smt||'—'}</td>
+      <td class="td-mono">${smtHtml}</td>
       <td class="td-mono">${fmtDate(d.fecha_inc)}</td>
       <td class="td-mono">${fmtDate(d.fecha_cierre)}</td>
+      <td><span class="dias-badge ${dv.cls}">${dv.label}</span></td>
       <td><div class="actions">
         ${!isReal?`<button class="act-btn done" onclick="completeTask(${d.id})" title="Marcar como realizado">✓</button>`:''}
         <button class="act-btn" onclick="editTask(${d.id})" title="Editar">✏</button>
@@ -1132,7 +1181,7 @@ saveTask = function() {
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 document.getElementById('overlay').addEventListener('click', e => { if(e.target===e.currentTarget) closeModal(); });
-['search','fil-tienda','fil-estado','fil-prio'].forEach(id => document.getElementById(id).addEventListener('input', render));
+['search','fil-tienda','fil-estado','fil-prio','fil-smt'].forEach(id => document.getElementById(id).addEventListener('input', render));
 
 loadFromSheets();
 </script>
